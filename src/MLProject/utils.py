@@ -1,10 +1,12 @@
 import os
 import sys
-from src.MLProject.exception import CustomException
-from src.MLProject.logger import logging
+import pickle
+import pyodbc
 import pandas as pd
 from dotenv import load_dotenv
-import pyodbc
+
+from src.MLProject.exception import CustomException
+from src.MLProject.logger import logging
 
 load_dotenv()
 
@@ -23,7 +25,7 @@ def read_sql_data():
             f"Trusted_Connection={trusted_connection};"
         )
         mydb = pyodbc.connect(connection_string)
-        logging.info(f"connection established : {mydb}")
+        logging.info(f"Connection established : {mydb}")
         
         # Note: Ensure table name matches 'Students'
         df = pd.read_sql('SELECT * FROM Students', mydb)
@@ -33,3 +35,14 @@ def read_sql_data():
         return df
     except Exception as ex:
         raise CustomException(ex, sys)
+    
+def save_object(file_path, obj):
+    try:
+        dir_path = os.path.dirname(file_path)
+        os.makedirs(dir_path, exist_ok=True)
+        
+        with open(file_path, "wb") as file_obj:
+            pickle.dump(obj, file_obj)
+            
+    except Exception as e:
+        raise CustomException(e, sys)

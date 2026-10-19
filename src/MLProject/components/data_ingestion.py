@@ -1,12 +1,12 @@
 import os
 import sys
+import pandas as pd
+from dataclasses import dataclass
+from sklearn.model_selection import train_test_split
+
 from src.MLProject.exception import CustomException
 from src.MLProject.logger import logging
-import pandas as pd
-
-from sklearn.model_selection import train_test_split
 from src.MLProject.utils import read_sql_data
-from dataclasses import dataclass
 
 @dataclass
 class DataIngestionConfig:
@@ -20,7 +20,8 @@ class DataIngestion:
         
     def initiate_data_ingestion(self):
         try:
-            df = read_sql_data()
+            # Note: Ensure the raw.csv file exists in notebook/data/
+            df = pd.read_csv(os.path.join('notebook', 'data', 'raw.csv'))
             logging.info("Reading Data From Database successfully completed")
             
             os.makedirs(os.path.dirname(self.ingestion_config.train_data_path), exist_ok=True)
